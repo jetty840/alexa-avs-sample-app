@@ -27,6 +27,7 @@ import com.amazon.alexa.avs.ui.MainWindow;
 import com.amazon.alexa.avs.ui.PlaybackControlsView;
 import com.amazon.alexa.avs.ui.UserSpeechVisualizerView;
 import com.amazon.alexa.avs.wakeword.WakeWordIPCFactory;
+import com.amazon.alexa.avs.NeoPixel;
 
 import javax.swing.SwingUtilities;
 
@@ -42,6 +43,7 @@ public class App {
     private MainWindow mainWindow;
 
     public static void main(String[] args) throws Exception {
+	NeoPixel.change("alexapi_startup");
         if (args.length == 1) {
             new App(args[0]);
         } else {

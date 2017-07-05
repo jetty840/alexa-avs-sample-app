@@ -41,6 +41,7 @@ import com.amazon.alexa.avs.wakeword.WakeWordDetectedHandler;
 import com.amazon.alexa.avs.wakeword.WakeWordIPC;
 import com.amazon.alexa.avs.wakeword.WakeWordIPC.IPCCommand;
 import com.amazon.alexa.avs.wakeword.WakeWordIPCFactory;
+import com.amazon.alexa.avs.NeoPixel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,6 +289,7 @@ public class AVSController implements RecordingStateListener, AlertHandler, Aler
     // start the recording process and send to server
     // takes an optional RMS callback and an optional request callback
     public void startRecording(RecordingRMSListener rmsListener, RequestListener requestListener) {
+	NeoPixel.change("alexapi_recording");
 
         if (this.wakeWordAgentEnabled) {
 
@@ -463,9 +465,11 @@ public class AVSController implements RecordingStateListener, AlertHandler, Aler
     private void handleAudioPlayerDirective(Directive directive) throws DirectiveHandlingException {
         String directiveName = directive.getName();
         if (AVSAPIConstants.AudioPlayer.Directives.Play.NAME.equals(directiveName)) {
+	    NeoPixel.change("orbitGreen");
             player.handlePlay((Play) directive.getPayload());
         } else if (AVSAPIConstants.AudioPlayer.Directives.Stop.NAME.equals(directiveName)) {
             player.handleStop();
+	    NeoPixel.change("alexapi_fadetoclear");
         } else if (AVSAPIConstants.AudioPlayer.Directives.ClearQueue.NAME.equals(directiveName)) {
             player.handleClearQueue((ClearQueue) directive.getPayload());
         } else {
@@ -489,7 +493,9 @@ public class AVSController implements RecordingStateListener, AlertHandler, Aler
     private void handleSpeechSynthesizerDirective(Directive directive)
             throws DirectiveHandlingException {
         if (AVSAPIConstants.SpeechSynthesizer.Directives.Speak.NAME.equals(directive.getName())) {
+	    NeoPixel.change("orbitYellow");
             player.handleSpeak((Speak) directive.getPayload());
+	    NeoPixel.change("alexapi_fadetoclear");
         } else {
             throw new DirectiveHandlingException(ExceptionType.UNSUPPORTED_OPERATION,
                     "The device's speech synthesizer component cannot handle this directive.");
@@ -500,6 +506,7 @@ public class AVSController implements RecordingStateListener, AlertHandler, Aler
             throws DirectiveHandlingException {
         String directiveName = directive.getName();
         if (AVSAPIConstants.SpeechRecognizer.Directives.ExpectSpeech.NAME.equals(directiveName)) {
+	    NeoPixel.change("alexapi_recording");
             // If your device cannot handle automatically starting to listen, you must
             // implement a listen timeout event, as described here:
             // https://developer.amazon.com/public/solutions/alexa/alexa-voice-service/rest/speechrecognizer-listentimeout-request
@@ -507,6 +514,7 @@ public class AVSController implements RecordingStateListener, AlertHandler, Aler
         } else if (AVSAPIConstants.SpeechRecognizer.Directives.StopCapture.NAME
                 .equals(directiveName)) {
             stopCaptureHandler.onStopCaptureDirective();
+	    NeoPixel.change("alexapi_fadetoclear");
         } else {
             throw new DirectiveHandlingException(ExceptionType.UNSUPPORTED_OPERATION,
                     "The device's speech recognizer component cannot handle this directive.");
@@ -611,6 +619,8 @@ public class AVSController implements RecordingStateListener, AlertHandler, Aler
             }
             acceptWakeWordEvents = true;
         }
+
+	NeoPixel.change("alexapi_fadetoclear");
     }
 
     // audio state callback for when recording has started
