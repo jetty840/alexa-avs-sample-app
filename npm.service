@@ -1,0 +1,23 @@
+[Unit]
+Description=Amazon Alexa - NPM
+Documentation=https://github.com/jetty840/avs-sample-app
+
+# Having network in "Wants" is intentional, because we want AlexaPi to start even when network is not available.
+# For example if there is a power loss and the device reboots, but the internet connection is not fixed yet
+# and there are timers / alarms, we want to handle them.
+Wants=network.target network-online.target
+Requires=sound.target
+After=network.target network-online.target sound.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/npm start
+
+
+User=root
+Group=root
+
+WorkingDirectory=/home/pi/Desktop/alexa-avs-sample-app/samples/companionService
+
+[Install]
+WantedBy=default.target
